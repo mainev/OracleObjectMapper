@@ -38,13 +38,13 @@ namespace CAS.DatabaseConnections.Oracle
             int id = 0;
             var dbObject = this.GetInstance();
             Type dbObjectType = typeof(T);
-            var fieldNames = dbObjectType.GetProperties()
-                           .ToList();
+            var objectFields = dbObjectType.GetProperties().ToList();
+            //var objectFieldNames = dbObjectType.GetProperties().Select(field => field.Name).ToList();
             //var fieldNames = dbObjectType.GetProperties()
             //                .Select(field => field.Name)
             //                .ToList();
 
-            fieldNames.ForEach(field =>
+            objectFields.ForEach(field =>
             {
                 //FieldInfo fi = dbObjectType.GetField(field, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
                 //PropertyInfo fi = dbObjectType.GetProperty(field);
@@ -74,7 +74,7 @@ namespace CAS.DatabaseConnections.Oracle
                     value = String.IsNullOrEmpty(value) ? "null" : value;
 
                     string field_value = "";
-                    field_value += field + "=" + value;
+                    field_value += field.Name + "=" + value;
                     values.Add(field_value);
                 }
             });
@@ -91,17 +91,12 @@ namespace CAS.DatabaseConnections.Oracle
 
             var dbObject = this.GetInstance();
             Type dbObjectType = typeof(T);
-            var fieldNames = dbObjectType.GetProperties().ToList();
-            //var fieldNames = dbObjectType.GetFields()
-            //                .Select(field => field.Name)
-            //                .ToList();
+            var objectFields = dbObjectType.GetProperties().ToList();
+            var objectFieldNames = dbObjectType.GetProperties().Select(field => field.Name).ToList();
 
-            fieldNames.ForEach(field =>
+            objectFields.ForEach(field =>
             {
-                //FieldInfo fi = dbObjectType.GetField(field, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
                 string value = "";
-                //if (fi != null)
-                //{
                     switch (field.PropertyType.Name)
                     {
                         case "Boolean":
@@ -119,10 +114,9 @@ namespace CAS.DatabaseConnections.Oracle
                     }
                     value = String.IsNullOrEmpty(value) ? "null" : value;
                     values.Add(value);
-                //}
             });
 
-            return String.Format("INSERT INTO {0} ({1}) VALUES ({2})", tbl, string.Join(",", fieldNames), string.Join(",", values));
+            return String.Format("INSERT INTO {0} ({1}) VALUES ({2})", tbl, string.Join(",", objectFieldNames), string.Join(",", values));
 
         }
 
