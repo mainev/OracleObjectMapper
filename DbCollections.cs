@@ -19,6 +19,9 @@ namespace CAS.DatabaseConnections.Oracle
             this.tableName = GetTableName(typeof(T));
         }
 
+        /// <summary>
+        /// Returns a list of <typeparamref name="T"/> objects.
+        /// </summary>
         public List<T> Get()
         {
             using (OracleConnection oracleConnection = new OracleConnection(this.dataSource))
